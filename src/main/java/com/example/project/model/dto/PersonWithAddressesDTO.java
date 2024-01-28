@@ -32,5 +32,5 @@ public class PersonWithAddressesDTO {
     private String username;
 
     @JsonProperty("addresses")
-    private List<Integer> addresses;
+    private List<String> addresses;
 }

@@ -22,6 +22,24 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final AddressRepository addressRepository;
 
+    public long getPersonsCount() {
+        return this.personRepository.count();
+    }
+
+    public long getAddressesCount() {
+        return this.addressRepository.count();
+    }
+
+    public List<PersonDTO> getAllPersonsWithName(String name)
+    {
+        return this.personRepository
+                .findAll()
+                .stream()
+                .filter(person -> person.getFirstName().equals(name))
+                .map(PersonMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<PersonDTO> getAll() {
         return this.personRepository
                 .findAll()

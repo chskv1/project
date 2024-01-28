@@ -48,10 +48,12 @@ class ProjectApplicationTests {
 	@LocalServerPort
 	private Integer port;
 
-	@BeforeEach
+	@AfterEach
 	void setup()
 	{
 		RestAssured.baseURI = "http://localhost:" + port;
+
+		//USUWANIE WSZYSTKICH ENCJI PRZED TESTEM
 		addressRepository.deleteAll();
 		personRepository.deleteAll();
 
@@ -64,9 +66,6 @@ class ProjectApplicationTests {
 		{
 			personService.addAddress(i+1, addresses.get(i));
 		}
-
-		System.out.println("Persons: " + personRepository.count());
-		System.out.println("Addresses: " + addressRepository.count());
 	}
 
 	private static List<Person> getPeople() {
@@ -114,6 +113,7 @@ class ProjectApplicationTests {
 	void repositoryAddressesForPerson()
 	{
 		assertEquals(1, addressRepository.findAddressesByPerson(personRepository.findById(1).get()).size());
+		assertEquals("USA", addressRepository.findAddressesByPerson(personRepository.findById(1).get()).get(0).getCountry());
 	}
 
 	@Test
@@ -147,6 +147,7 @@ class ProjectApplicationTests {
 		PersonDTO personDTO = new PersonDTO(6,  "Maciej", "Czapliński", "maczaplinski@gmail.com", "Male", "maciej");
 		personService.save(personDTO);
 		assertDoesNotThrow(() -> personService.getById(6));
+		assertEquals(6, personService.getPersonsCount());
 	}
 
 	@Test
@@ -155,6 +156,7 @@ class ProjectApplicationTests {
 		PersonDTO personDTO = new PersonDTO(1,  "Maciej", "Czapliński", "maczaplinski@gmail.com", "Male", "maciej");
 		personService.update(personDTO, 1);
 		assertEquals("Maciej", personService.getById(1).getFirstName());
+		assertEquals(5, personService.getPersonsCount());
 	}
 
 	@Test
@@ -162,6 +164,7 @@ class ProjectApplicationTests {
 	{
 		personService.delete(1);
 		assertThrows(PersonNotFound.class, () -> personService.getById(1));
+		assertEquals(4, personService.getPersonsCount());
 	}
 
 	@Test
@@ -317,5 +320,22 @@ class ProjectApplicationTests {
 				.contentType(ContentType.JSON)
 				.statusCode(HttpStatus.CREATED.value())
 				.body("id", equalTo(6));
+	}
+
+	// EXCEPTION TESTS ---------------------------------------------------------------------------------------------------
+
+	// Nie ma wiecej wyjatkow w aplikacji wiec przetestowalem kazdy
+
+	@Test
+	void personNotFoundException()
+	{
+		given()
+				.contentType(ContentType.JSON)
+				.when()
+				.get("persons/12312")
+				.then()
+				.contentType(ContentType.JSON)
+				.statusCode(HttpStatus.NOT_FOUND.value())
+				.body("error_message", equalTo("Person could not be found!"));
 	}
 }

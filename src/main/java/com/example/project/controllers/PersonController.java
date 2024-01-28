@@ -1,5 +1,6 @@
 package com.example.project.controllers;
 
+import com.example.project.model.Person;
 import com.example.project.model.dto.AddressDTO;
 import com.example.project.model.dto.PersonDTO;
 import com.example.project.model.dto.PersonWithAddressesDTO;
@@ -28,6 +29,14 @@ public class PersonController {
     @PostMapping()
     public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonDTO personDTO) {
         personService.save(personDTO);
+        return new ResponseEntity<>(personDTO, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/with/address")
+    public ResponseEntity<PersonDTO> createPersonWithAddress(@RequestBody PersonDTO personDTO, @RequestBody AddressDTO addressDTO)
+    {
+        personService.save(personDTO);
+        personService.addAddress(personDTO.getId(), addressDTO);
         return new ResponseEntity<>(personDTO, HttpStatus.CREATED);
     }
 

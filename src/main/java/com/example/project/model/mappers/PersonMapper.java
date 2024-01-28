@@ -5,6 +5,8 @@ import com.example.project.model.Person;
 import com.example.project.model.dto.PersonDTO;
 import com.example.project.model.dto.PersonWithAddressesDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PersonMapper {
@@ -20,6 +22,15 @@ public class PersonMapper {
     }
 
     public static PersonWithAddressesDTO toDTOwithAddrresses(Person person) {
+
+        var cities = person.getAddresses().stream().map(Address::getCity).toList();
+        var streetNames = person.getAddresses().stream().map(Address::getStreetName).toList();
+
+        List<String> moreData = new ArrayList<>();
+        for(int i = 0; i < cities.size(); i++)
+            moreData.add(cities.get(i) + ": " + streetNames.get(i));
+
+
         return new PersonWithAddressesDTO(
                 person.getId(),
                 person.getFirstName(),
@@ -27,9 +38,7 @@ public class PersonMapper {
                 person.getEmail(),
                 person.getGender(),
                 person.getUsername(),
-                person.getAddresses().stream()
-                        .map(Address::getId)
-                        .collect(Collectors.toList())
+                moreData
         );
     }
 

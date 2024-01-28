@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,8 +15,10 @@ public class AddressDTO {
     public AddressDTO() {
     }
 
+    @NotBlank
     private Integer id;
 
+    @NotBlank
     @JsonProperty("country")
     private String country;
 
